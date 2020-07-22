@@ -7,15 +7,15 @@
    * 输出： `items: item[barcode: string, count: int]`
 2. 获取每个item的详细信息
    * 输入：`items: item[barcode: string, count: int]`
-   * 输出：`items: item[barcode: string, count: int, name: string, unitPrice: int]`
+   * 输出：`itemsWithInfo: item[barcode: string, count: int, name: string, unitPrice: int]`
 3. 计算每个item的总价
-   * 输入：`items: item[barcode: string, count: int, name: string, unitPrice: int]`
-   * 输出：`items: item[barcode: string, count: int, name: string, unitPrice: int, totalPrice: int]`
+   * 输入：`itemsWithInfo: item[barcode: string, count: int, name: string, unitPrice: int]`
+   * 输出：`itemsWithTotalPrice: item[barcode: string, count: int, name: string, unitPrice: int, totalPrice: int]`
 4. 计算所有item的总价
-   * 输入：`items: item[barcode: string, count: int, name: string, unitPrice: int, totalPrice: int]`
+   * 输入：`itemsWithTotalPrice: item[barcode: string, count: int, name: string, unitPrice: int, totalPrice: int]`
    * 输出：`totalPrice: int`
 5. 生成每个item的发票信息
-   * 输入：`items: item[barcode: string, count: int, name: string, unitPrice: int, totalPrice: int]`
+   * 输入：`itemsWithTotalPrice: item[barcode: string, count: int, name: string, unitPrice: int, totalPrice: int]`
    * 输出：`receiptItems: string[]`
 6. 格式化发票信息
    * 输入：`receiptItems: string[], totalPrice: int`
@@ -26,7 +26,7 @@
 
 ### Context Diagram
 
-!['context diagram'](./context.png)
+!['context diagram'](./context.drawio.png)
 
 #### PDCA
 
@@ -41,29 +41,29 @@
 |  ----  | ----  |
 |  P  |  3min |
 |  D  |  3min |
-|  C  |  none |
-|  A  |  none |
+|  C  |  传入的数组不能修改，需要进行拷贝（注意深拷贝/浅拷贝问题） |
+|  A  |  拷贝 |
 
 | | 计算每个item的总价 |
 |  ----  | ----  |
 |  P  |  1min |
 |  D  |  1min |
-|  C  |  none |
-|  A  |  none |
+|  C  |  传入的数组不能修改，需要进行拷贝（注意深拷贝/浅拷贝问题） |
+|  A  |  拷贝 |
 
 | | 计算所有item的总价 |
 |  ----  | ----  |
 |  P  |  1min |
 |  D  |  1min |
-|  C  |  none |
-|  A  |  none |
+|  C  |   |
+|  A  |   |
 
 | | 生成每个item的发票信息 |
 |  ----  | ----  |
 |  P  |  1min |
 |  D  |  1min |
-|  C  |  none |
-|  A  |  none |
+|  C  |   |
+|  A  |   |
 
 | | 格式化发票信息 |
 |  ----  | ----  |
@@ -76,5 +76,5 @@
 |  ----  | ----  |
 |  P  | 1min  |
 |  D  | 1min  |
-|  C  |  none |
-|  A  |  none |
+|  C  |   |
+|  A  |   |

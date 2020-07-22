@@ -1,9 +1,9 @@
 function printReceipt(barcodes) {
-    let items = countByBarcode(barcodes);
-    items = getItemInfoByBarcode(items);
-    items = calItemTotalPrice(items);
-    const totalPrice = calAllItemsTotalPrice(items);
-    const receiptItems = generateReceiptItems(items);
+    const items = getBarcodeCountItems(barcodes);
+    const itemsWithInfo = getBarcodeInfoItems(items);
+    const itemsWithTotalPrice = calEachItemTotalPrice(itemsWithInfo);
+    const totalPrice = calWholeItemTotalPrice(itemsWithTotalPrice);
+    const receiptItems = generateReceiptItems(itemsWithTotalPrice);
     const receipt = generateReceipt(receiptItems, totalPrice);
     console.log(receipt);
 }
@@ -43,51 +43,63 @@ function getBarcodeInfoList() {
     ]
 }
 
-function countByBarcode(barcodes) {
+function getBarcodeCountItems(barcodes) {
     let items = [];
     barcodes.forEach(barcode => {
-        let item = items.find(elem => elem.barcode === barcode);
+        const item = items.find(elem => elem.barcode === barcode);
         if (!item) {
             items.push({
                 barcode: barcode,
                 count: 1
             });
         } else {
-            item.count = item.count + 1;
+            ++item.count;
         }
     })
     return items;
 }
 
-function getItemInfoByBarcode(items) {
-    let barcodeInfoList = getBarcodeInfoList();
+function getBarcodeInfoItems(items) {
+    let itemsWithInfo = []
+    const barcodeInfoList = getBarcodeInfoList();
     items.forEach(item => {
-        let barcodeInfo = barcodeInfoList.find(elem => elem.barcode === item.barcode);
+        const barcodeInfo = barcodeInfoList.find(elem => elem.barcode === item.barcode);
         if (barcodeInfo) {
-            item.name = barcodeInfo.name;
-            item.unitPrice = barcodeInfo.price;
+            itemsWithInfo.push({
+                barcode: item.barcode,
+                count: item.count,
+                name: barcodeInfo.name,
+                unitPrice: barcodeInfo.price
+            })
         }
     })
-    return items;
+    return itemsWithInfo;
 }
 
-function calItemTotalPrice(items) {
-    items.forEach(item => {
-        item.totalPrice = item.unitPrice * item.count;
+function calEachItemTotalPrice(itemsWithInfo) {
+    let itemsWithTotalPrice = []
+    itemsWithInfo.forEach(item => {
+        itemsWithTotalPrice.push({
+            barcode: item.barcode,
+            count: item.count,
+            name: item.name,
+            unitPrice: item.unitPrice,
+            totalPrice: item.unitPrice * item.count,
+        })
     })
-    return items;
+    return itemsWithTotalPrice;
 }
 
-function calAllItemsTotalPrice(items) {
+function calWholeItemTotalPrice(itemsWithTotalPrice) {
     let totalPrice = 0;
-    items.forEach(item => totalPrice += item.totalPrice)
+    itemsWithTotalPrice.forEach(item => totalPrice += item.totalPrice)
     return totalPrice;
 }
 
-function generateReceiptItems(items) {
+function generateReceiptItems(itemsWithTotalPrice) {
     let receiptItems = []
-    items.forEach(item => {
-        let receiptItem = `Name: ${item.name}, Quantity: ${item.count}, Unit price: ${item.unitPrice} (yuan), Subtotal: ${item.totalPrice} (yuan)\n`;
+    itemsWithTotalPrice.forEach(item => {
+        const receiptItem = `Name: ${item.name}, Quantity: ${item.count}, Unit price: ${item.unitPrice} (yuan), Subtotal: ${item.totalPrice} (yuan)\n`;
         receiptItems.push(receiptItem);
     })
     return receiptItems;
